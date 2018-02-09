@@ -1,0 +1,61 @@
+#! /bin/bash
+
+id=$(id -u)
+branch="$1"
+url="https://repo.herecura.eu/herecura/x86_64/"
+dir="xx"
+
+if [ "$branch" = "stable" ]
+then
+	tar=$(wget -O - -q $url | grep vivaldi-ffmpeg-codecs | grep -v sig | cut -d'"' -f2)
+	dir="vivaldi"
+fi
+
+if [ "$branch" = "snapshot" ]
+then
+	tar=$(wget -O - -q $url | grep vivaldi-snapshot-ffmpeg-codecs | grep -v sig | cut -d'"' -f2)
+	dir="vivaldi-snapshot"
+fi
+
+if [ $dir = "xx" ]
+then
+	echo "To install FFMPEG for stable version : get-ffmpeg-vivaldi stable"
+	echo "To install FFMPEG for snapshot version : get-ffmpeg-vivaldi snapshot"
+	exit 2;
+fi
+
+if [ $id -eq 0 ]
+then
+	cd /tmp
+	mkdir get-ffmpeg-vivaldi-$branch
+	cd get-ffmpeg-vivaldi-$branch
+	echo Downloading FFMPEG for Vivaldi $branch...
+	wget -q "$url$tar"
+	if [ $? -eq 0 ]
+	then
+		echo "Download OK !"
+	else
+		echo "Download Failed !"
+	fi
+	echo Extracting FFMPEG for Vivaldi $branch...
+	tar -xf $tar -C . 2>/dev/null
+	if [ $? -eq 0 ]
+	then
+		echo "Extraction OK !"
+	else
+		echo "Extraction Failed !"
+	fi
+	echo Installing FFMPEG for Vivaldi $branch...
+	cp opt/$dir/libffmpeg.so /opt/$dir/libffmpeg.so
+	if [ $? -eq 0 ]
+	then
+		echo "Install OK !"
+		rm -f /tmp/$tar
+		rm -rf /tmp/get-ffmpeg-vivaldi-$branch
+	else
+		echo "Install Failed !"
+	fi
+else
+	echo Program must be executed with root right
+fi
+
