@@ -7,20 +7,20 @@ dir="xx"
 
 if [ "$branch" = "stable" ]
 then
-	tar=$(wget -O - -q $url | grep vivaldi-ffmpeg-codecs | grep -v sig | cut -d'"' -f2)
+	tar=$(wget -O - -q $url | grep vivaldi-ffmpeg-codecs | grep -v sig | tail -1 | cut -d'"' -f2)
 	dir="vivaldi"
 fi
 
 if [ "$branch" = "snapshot" ]
 then
-	tar=$(wget -O - -q $url | grep vivaldi-snapshot-ffmpeg-codecs | grep -v sig | cut -d'"' -f2)
+	tar=$(wget -O - -q $url | grep vivaldi-snapshot-ffmpeg-codecs | grep -v sig | tail -1 | cut -d'"' -f2)
 	dir="vivaldi-snapshot"
 fi
 
 if [ $dir = "xx" ]
 then
-	echo "To install FFMPEG for stable version : get-ffmpeg-vivaldi stable"
-	echo "To install FFMPEG for snapshot version : get-ffmpeg-vivaldi snapshot"
+	echo "To install FFMPEG codec for stable version   : get-ffmpeg-vivaldi stable"
+	echo "To install FFMPEG codec for snapshot version : get-ffmpeg-vivaldi snapshot"
 	exit 2;
 fi
 
